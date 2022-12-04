@@ -19,6 +19,7 @@ import (
 	"go.mau.fi/whatsmeow/types/events"
 	waLog "go.mau.fi/whatsmeow/util/log"
 	"google.golang.org/protobuf/proto"
+	"github.com/joho/godotenv"
 )
 
 type MyClient struct {
@@ -30,12 +31,23 @@ func (mycli *MyClient) register() {
 	mycli.eventHandlerID = mycli.WAClient.AddEventHandler(mycli.eventHandler)
 }
 
+func goDotEnvVariable(key string) string {
+
+	// load .env file
+	err := godotenv.Load(".env")
+  
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+  
+	return os.Getenv(key)
+}
+
 func (mycli *MyClient) eventHandler(evt interface{}) {
 	switch v := evt.(type) {
 	case *events.Message:
 		newMessage := v.Message
-		var phonenumber string
-		phonenumber = os.Getenv("PHONENUMBER")
+		phonenumber := goDotEnvVariable("PHONENUMBER")
 		var msg string
 
 		if v.Info.IsGroup {
