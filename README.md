@@ -5,6 +5,8 @@ to replicate my setup
 * `python server.py` will start a seperate browser with chatgpt.
 * now add the new phone number to your contacts
 
-Now you can chat with chatGPT for whatsapp directly or add it to a groupchat.
-To trigger a respons mention it in your message like "@GPTBOT what is the best time to visit the dom tower in utrecht"
+Now you can chat with chatGPT for whatsapp directly.
+Or add it to a groupchat.
+* To trigger a respons mention it in your message like
+`@GPTBOT what is the best time to visit the dom tower in utrecht`
 
