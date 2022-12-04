@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"syscall"
 	"strings"
-	"regexp"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mdp/qrterminal/v3"
 	"go.mau.fi/whatsmeow"
@@ -41,13 +40,12 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 		if v.Info.IsGroup {
 			extendedTextMessage := newMessage.GetExtendedTextMessage()
 			text := extendedTextMessage.GetText()
-			pattern := regexp.MustCompile(phonenumber)
 			if !strings.Contains(text, phonenumber) {
 				fmt.Println("msg was send to a group but not @", phonenumber)
 				return
 			}
 			fmt.Println("msg was send to a group and @ ", phonenumber)
-			msg = pattern.ReplaceAllString(text, "")
+			msg = strings.ReplaceAll(text, "@31623860004", "")
 		}else{
 			msg = newMessage.GetConversation()
 			fmt.Println("msg was send not in a group")

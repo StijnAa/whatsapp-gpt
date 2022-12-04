@@ -49,6 +49,9 @@ def chat():
     send_message(message)
     response = get_last_message()
     print("Response: ", response)
+    if "Your authentication token has expired" in response:
+        start_browser()
+        return "please try again"
     return response
 
 def start_browser():
