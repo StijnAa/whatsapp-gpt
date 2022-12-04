@@ -1,5 +1,12 @@
 # whatsapp-gpt
-* You'll need to run WhatsApp from a phone number using the golang library I'm using.
-* You'll run a dedicated browser in another window that's controlling ChatGPT.
-* Two terminals: `go run main.go`, and `python server.py`. I am extremely doubtful they will work for you on the first run.
-* This marks the end of the readme file; it is a bit sparse; thankfully the code is too! Just tuck in if you can... and I will try to add more here later.
+to replicate my setup
+* You'll need to get a new simcard and add it to WhatsApp on a phone
+* log in via the qr code in the terminal after running `go run main.go`.
+* `python server.py` will start a seperate browser with chatgpt.
+* now add the new phone number to your contacts
+
+Now you can chat with chatGPT for whatsapp directly.
+Or add it to a groupchat.
+* To trigger a respons mention it in your message like
+`@GPTBOT what is the best time to visit the dom tower in utrecht?`
+
