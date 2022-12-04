@@ -34,7 +34,8 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 	switch v := evt.(type) {
 	case *events.Message:
 		newMessage := v.Message
-		phonenumber := os.Getenv("PHONENUMBER")
+		var phonenumber string
+		phonenumber = os.Getenv("PHONENUMBER")
 		var msg string
 
 		if v.Info.IsGroup {
@@ -45,7 +46,7 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 				return
 			}
 			fmt.Println("msg was send to a group and @ ", phonenumber)
-			msg = strings.ReplaceAll(text, "@31623860004", "")
+			msg = strings.ReplaceAll(text, phonenumber, "")
 		}else{
 			msg = newMessage.GetConversation()
 			fmt.Println("msg was send not in a group")
