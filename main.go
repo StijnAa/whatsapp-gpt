@@ -9,7 +9,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
+	"strings"
+	"regexp"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mdp/qrterminal/v3"
 	"go.mau.fi/whatsmeow"
@@ -34,11 +35,31 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 	switch v := evt.(type) {
 	case *events.Message:
 		newMessage := v.Message
-		msg := newMessage.GetConversation()
-		fmt.Println("Message from:", v.Info.Sender.User, "->", msg)
+		phonenumber := os.Getenv("PHONENUMBER")
+		var msg string
+
+		if v.Info.IsGroup {
+			extendedTextMessage := newMessage.GetExtendedTextMessage()
+			text := extendedTextMessage.GetText()
+			pattern := regexp.MustCompile(phonenumber)
+			if !strings.Contains(text, phonenumber) {
+				fmt.Println("msg was send to a group but not @", phonenumber)
+				return
+			}
+			fmt.Println("msg was send to a group and @ ", phonenumber)
+			msg = pattern.ReplaceAllString(text, "")
+		}else{
+			msg = newMessage.GetConversation()
+			fmt.Println("msg was send not in a group")
+		}
+
+		fmt.Println("msg", msg)
+
 		if msg == "" {
+			fmt.Println("msg was empty")
 			return
 		}
+		
 		// Make a http request to localhost:5001/chat?q= with the message, and send the response
 		// URL encode the message
 		urlEncoded := url.QueryEscape(msg)
@@ -56,8 +77,13 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 		// encode out as a string
 		response := &waProto.Message{Conversation: proto.String(string(newMsg))}
 		fmt.Println("Response:", response)
-
-		userJid := types.NewJID(v.Info.Sender.User, types.DefaultUserServer)
+		
+		var userJid types.JID
+		if v.Info.IsGroup {
+			userJid = types.NewJID(v.Info.Chat.User, types.GroupServer)
+		} else {
+			userJid = types.NewJID(v.Info.Sender.User, types.DefaultUserServer)
+		}
 		mycli.WAClient.SendMessage(context.Background(), userJid, "", response)
 
 	}
