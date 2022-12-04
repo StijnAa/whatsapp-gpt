@@ -65,12 +65,24 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 		}
 
 		fmt.Println("msg", msg)
+		var userJid types.JID
+		msgConfirmed := &waProto.Message{}
+		response := &waProto.Message{}
 
+		if v.Info.IsGroup {
+			userJid = types.NewJID(v.Info.Chat.User, types.GroupServer)
+		} else {
+			userJid = types.NewJID(v.Info.Sender.User, types.DefaultUserServer)
+		}
+		msgConfirmed.Conversation = proto.String(string("♾️"))
+		mycli.WAClient.SendMessage(context.Background(), userJid, "", msgConfirmed)
+			
 		if msg == "" {
 			fmt.Println("msg was empty")
+			response.Conversation = proto.String(string("I could not find a question in the message you send me"))
+			mycli.WAClient.SendMessage(context.Background(), userJid, "", response)
 			return
 		}
-		
 		// Make a http request to localhost:5001/chat?q= with the message, and send the response
 		// URL encode the message
 		urlEncoded := url.QueryEscape(msg)
@@ -79,6 +91,8 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 		resp, err := http.Get(url)
 		if err != nil {
 			fmt.Println("Error making request:", err)
+			response.Conversation = proto.String(string("Error making request"))
+			mycli.WAClient.SendMessage(context.Background(), userJid, "", response)
 			return
 		}
 		// Read the response
@@ -86,15 +100,8 @@ func (mycli *MyClient) eventHandler(evt interface{}) {
 		buf.ReadFrom(resp.Body)
 		newMsg := buf.String()
 		// encode out as a string
-		response := &waProto.Message{Conversation: proto.String(string(newMsg))}
+		response.Conversation = proto.String(string(newMsg))
 		fmt.Println("Response:", response)
-		
-		var userJid types.JID
-		if v.Info.IsGroup {
-			userJid = types.NewJID(v.Info.Chat.User, types.GroupServer)
-		} else {
-			userJid = types.NewJID(v.Info.Sender.User, types.DefaultUserServer)
-		}
 		mycli.WAClient.SendMessage(context.Background(), userJid, "", response)
 
 	}
