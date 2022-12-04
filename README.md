@@ -8,5 +8,5 @@ to replicate my setup
 Now you can chat with chatGPT for whatsapp directly.
 Or add it to a groupchat.
 * To trigger a respons mention it in your message like
-`@GPTBOT what is the best time to visit the dom tower in utrecht`
+`@GPTBOT what is the best time to visit the dom tower in utrecht?`
 
